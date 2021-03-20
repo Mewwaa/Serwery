@@ -181,6 +181,8 @@ def removeAllPupilsSubjects():
     )
 # -----------------------------------------------
 
+# Pupil_Teacher's endpoints
+# -----------------------------------------------
 @app.route('/addPupilTeacher/<pupil_id>/<teacher_id>')
 def addPupilTeacher(pupil_id, teacher_id):
     mycursor = mydb.cursor()
@@ -215,6 +217,7 @@ def removeAllPupilTeachers():
     return jsonify(
         IMPORTANT="All Pupil_Teacher removed succesfully"
     )
+# -----------------------------------------------
 
 # @app.route('/removeSubject/<id>')
 # def removeSubject(id):
