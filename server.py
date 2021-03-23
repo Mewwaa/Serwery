@@ -5,6 +5,8 @@ import mysql.connector
 import requests
 import random
 
+from utils import getPupilsFromDb
+
 # Jeśli pojawi się błąd przy imporcie to ja użyłam tych komend:
 # pip install Flask
 # pip install mysqlclient
@@ -22,26 +24,30 @@ mydb = mysql.connector.connect(
 # -----------------------------------------------
 @app.route('/addPupil/<name>/<surname>/<pesel>/<class_name>') # localhost:3000/addPupil/Ewa/Zalewska/1234/2PUp
 def addPupil(name, surname, pesel, class_name):
-    mycursor = mydb.cursor()
-    newPupil = "INSERT INTO pupil (name, surname, pesel, class) VALUES (%s, %s, %s, %s)"
-    newPupilValues = (name, surname, pesel, class_name)
-    mycursor.execute(newPupil, newPupilValues)   
-    mydb.commit()
-    print(mycursor.rowcount, "record inserted.")
+    mycursor = mydb.cursor(buffered=True)
+    checkIfPupilExists = "Select * from pupil where pupil.pesel={}".format(pesel)
+    mycursor.execute(checkIfPupilExists)
+    result = mycursor.fetchone()   
+    if result is None:
+        newPupil = "INSERT INTO pupil (name, surname, pesel, class) VALUES (%s, %s, %s, %s)"
+        newPupilValues = (name, surname, pesel, class_name)
+        mycursor.execute(newPupil, newPupilValues)   
+        mydb.commit()
+        print(mycursor.rowcount, "record inserted.")
+        return jsonify(
+            IMPORTANT="Pupil "+ name +" "+ surname+" added to database."
+        )
     return jsonify(
-        IMPORTANT="Pupil "+ name +" "+ surname+" added to database."
+        IMPORTANT="User "+ name +" "+ surname+" already exists in the database."
     )
 
 @app.route('/showAllPupils') # localhost:3000/showAllPupils
 def showAllPupils():
-    mycursor = mydb.cursor()
-    sql = 'SELECT * FROM pupil'
-    mycursor.execute(sql)
-    results = mycursor.fetchall()
+    results = getPupilsFromDb(mydb)
     for x in results:
         print(x)
     return jsonify(
-        IMPORTANT='All pupils showed',
+        results,
     )
 
 @app.route('/removeAllPupils') # localhost:3000/removeAllPupils
