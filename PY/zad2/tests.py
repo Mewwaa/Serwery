@@ -19,6 +19,24 @@ class TestGetUsers(unittest.TestCase):
         result = mocked_get_users.return_value
         self.assertEqual(2,len(result) )
 
+class TestGetRentals(unittest.TestCase): 
+    @mock.patch("utils.showAllRentals", return_value=['Rental1','Rental2'] )
+    def testGetRentalsFromDbMocked(self, mocked_get_rentals): 
+        result = mocked_get_rentals.return_value
+        self.assertEqual(2,len(result) )
+
+class TestDeleteCars(unittest.TestCase): 
+    @mock.patch("utils.deleteAllCars", return_value=[] )
+    def testDeleteCarsFromDbMocked(self, mocked_get_rentals): 
+        result = mocked_get_rentals.return_value
+        self.assertEqual(0,len(result) )
+
+class TestDeleteUsers(unittest.TestCase): 
+    @mock.patch("utils.deleteAllUsers", return_value=[] )
+    def testDeleteUsersFromDbMocked(self, mocked_get_rentals): 
+        result = mocked_get_rentals.return_value
+        self.assertEqual(0,len(result) )
+
 
 if __name__ == '__main__': 
     unittest.main() 
